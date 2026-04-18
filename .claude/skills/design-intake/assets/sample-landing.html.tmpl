@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="{{PRIMARY_LOCALE}}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width={{VIEWPORT_WIDTH}},initial-scale=1,viewport-fit=cover">
+  <title>{{BRAND_NAME}} · Landing</title>
+
+  <!--
+    Sample landing page rendered from design.tokens.yaml.
+    Purpose: give Claude Design a concrete brand-feel signal per the official
+    onboarding guidance ("完成的登陸頁面比單獨的色彩調色板更能向 Claude
+    說明您品牌的感受").
+
+    This file is one of two sample pages the intake emits. The other is
+    sample-dashboard.html. Upload both alongside design.md +
+    design.tokens.yaml.
+
+    Rendered at primary viewport: {{VIEWPORT_WIDTH}} × {{VIEWPORT_HEIGHT}}
+    Posture: {{VIEWPORT_POSTURE}}
+  -->
+
+  <style>
+    /* ----- CSS variables from design.tokens.yaml ----- */
+
+    :root {
+      /* Semantic background */
+      --bg-canvas:   {{BG_CANVAS_HEX}};
+      --bg-surface:  {{BG_SURFACE_HEX}};
+      --bg-elevated: {{BG_ELEVATED_HEX}};
+
+      /* Semantic foreground */
+      --fg-primary:   {{FG_PRIMARY_HEX}};
+      --fg-secondary: {{FG_SECONDARY_HEX}};
+      --fg-muted:     {{FG_MUTED_HEX}};
+
+      /* Accent (signal or decorative per brand doctrine) */
+      --accent-primary: {{ACCENT_PRIMARY_HEX}};
+      --accent-hover:   {{ACCENT_HOVER_HEX}};
+
+      /* Border */
+      --border-subtle: {{BORDER_SUBTLE_HEX}};
+      --border-strong: {{BORDER_STRONG_HEX}};
+
+      /* Typography */
+      --font-primary: {{FONT_PRIMARY_STACK}};
+      --font-mono:    {{FONT_MONO_STACK}};
+
+      /* Radius */
+      --radius-default: {{RADIUS_DEFAULT}}px;
+
+      /* Motion — timing function may be bezier / steps / spring */
+      --motion-base:     {{DURATION_BASE}}ms;
+      --motion-fast:     {{DURATION_FAST}}ms;
+      --timing-standard: {{TIMING_STANDARD_CSS}};
+
+      /* Focus ring */
+      --focus-ring-width:  {{FOCUS_WIDTH}}px;
+      --focus-ring-color:  {{FOCUS_COLOR_HEX}};
+      --focus-ring-offset: {{FOCUS_OFFSET}}px;
+    }
+
+    /* ----- Reset + base ----- */
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      {{#HAS_HIDPI_INTEGER_SCALE}}
+      image-rendering: pixelated;
+      {{/HAS_HIDPI_INTEGER_SCALE}}
+    }
+
+    body {
+      background: var(--bg-canvas);
+      color: var(--fg-primary);
+      font-family: var(--font-primary);
+      font-size: {{BODY_SIZE}}px;
+      line-height: {{BODY_LINE_HEIGHT}};
+      {{#HAS_HIDPI_INTEGER_SCALE}}
+      -webkit-font-smoothing: none;
+      {{/HAS_HIDPI_INTEGER_SCALE}}
+      {{#HAS_NOISE}}
+      position: relative;
+      {{/HAS_NOISE}}
+    }
+
+    {{#HAS_NOISE}}
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: url('#noise-filter');
+      opacity: {{NOISE_OPACITY}};
+      mix-blend-mode: overlay;
+    }
+    {{/HAS_NOISE}}
+
+    {{#HAS_SCANLINE}}
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent 0 1px,
+        rgba(0,0,0,{{SCANLINE_OPACITY}}) 1px {{SCANLINE_INTERVAL}}px
+      );
+    }
+    {{/HAS_SCANLINE}}
+
+    /* ----- Layout ----- */
+
+    main {
+      max-width: {{CONTAINER_MAX}}px;
+      margin: 0 auto;
+      padding: {{HERO_PAD_TOP}}px 16px {{HERO_PAD_BOTTOM}}px;
+    }
+
+    /* ----- Typography ----- */
+
+    .eyebrow {
+      font-size: {{MICRO_SIZE}}px;
+      letter-spacing: {{EYEBROW_LETTER_SPACING}};
+      text-transform: uppercase;
+      color: var(--fg-muted);
+      margin-bottom: 16px;
+    }
+
+    h1.display {
+      font-size: {{DISPLAY_SIZE}}px;
+      line-height: {{DISPLAY_LINE_HEIGHT}};
+      letter-spacing: {{DISPLAY_LETTER_SPACING}};
+      font-weight: {{DISPLAY_WEIGHT}};
+      color: {{DISPLAY_COLOR}};
+      margin-bottom: 24px;
+      {{#HAS_DISPLAY_DRAMATIC_SIZE}}
+      /* Display sized for hero impact; expect visual edit if too small on device. */
+      {{/HAS_DISPLAY_DRAMATIC_SIZE}}
+    }
+
+    p.lede {
+      font-size: {{LEDE_SIZE}}px;
+      color: var(--fg-secondary);
+      max-width: 48ch;
+      margin-bottom: 32px;
+    }
+
+    /* ----- Primary CTA ----- */
+
+    .cta {
+      display: inline-block;
+      padding: {{CTA_PAD_Y}}px {{CTA_PAD_X}}px;
+      background: var(--accent-primary);
+      color: {{CTA_FG_HEX}};
+      border: none;
+      border-radius: {{CTA_RADIUS}}px;
+      font-family: var(--font-primary);
+      font-size: {{CTA_SIZE}}px;
+      font-weight: {{CTA_WEIGHT}};
+      cursor: pointer;
+      text-decoration: none;
+      transition: background var(--motion-fast) var(--timing-standard),
+                  transform var(--motion-fast) var(--timing-standard);
+    }
+
+    .cta:hover {
+      background: var(--accent-hover);
+      {{#CTA_HOVER_TRANSFORM}}
+      transform: {{CTA_HOVER_TRANSFORM}};
+      {{/CTA_HOVER_TRANSFORM}}
+    }
+
+    .cta:focus-visible {
+      outline: var(--focus-ring-width) solid var(--focus-ring-color);
+      outline-offset: var(--focus-ring-offset);
+    }
+
+    .cta:active {
+      transform: scale(0.98);
+    }
+
+    /* ----- Secondary content ----- */
+
+    .proof {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border-subtle);
+      color: var(--fg-muted);
+      font-size: {{SMALL_SIZE}}px;
+    }
+
+    @media (max-width: 640px) {
+      h1.display { font-size: {{DISPLAY_SIZE_MOBILE}}px; }
+      main { padding: {{HERO_PAD_TOP_MOBILE}}px 16px {{HERO_PAD_BOTTOM_MOBILE}}px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cta { transition: none; }
+      .cta:hover { transform: none; }
+    }
+  </style>
+
+  {{#HAS_NOISE}}
+  <svg width="0" height="0" style="position:absolute">
+    <filter id="noise-filter">
+      <feTurbulence baseFrequency="{{NOISE_FREQUENCY}}" numOctaves="{{NOISE_OCTAVES}}" />
+    </filter>
+  </svg>
+  {{/HAS_NOISE}}
+</head>
+
+<body>
+  <main>
+    <p class="eyebrow">{{EYEBROW_TEXT}}</p>
+
+    <h1 class="display">{{HERO_HEADLINE}}</h1>
+
+    <p class="lede">{{HERO_LEDE}}</p>
+
+    <a class="cta" href="#">{{CTA_LABEL}}</a>
+
+    <section class="proof">
+      <p>{{PROOF_TEXT}}</p>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="{{PRIMARY_LOCALE}}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width={{VIEWPORT_WIDTH}},initial-scale=1,viewport-fit=cover">
+  <title>{{BRAND_NAME}} · Dashboard</title>
+
+  <!--
+    Sample dashboard / second-surface page.
+    Exercises: h2 + body + small typography, Card × default, Card × hover,
+    nav-item × default and × active, list-row or form-row (3+ rows), grid
+    mode (standard-12 / broken-12 / full-bleed-stack).
+
+    For products without a dashboard (consumer content apps), substitute
+    a list-heavy surface — library / feed / archive.
+  -->
+
+  <style>
+    :root {
+      --bg-canvas:   {{BG_CANVAS_HEX}};
+      --bg-surface:  {{BG_SURFACE_HEX}};
+      --bg-elevated: {{BG_ELEVATED_HEX}};
+      --fg-primary:   {{FG_PRIMARY_HEX}};
+      --fg-secondary: {{FG_SECONDARY_HEX}};
+      --fg-muted:     {{FG_MUTED_HEX}};
+      --border-subtle: {{BORDER_SUBTLE_HEX}};
+      --border-strong: {{BORDER_STRONG_HEX}};
+      --accent-primary: {{ACCENT_PRIMARY_HEX}};
+      --accent-hover:   {{ACCENT_HOVER_HEX}};
+      --danger-base: {{DANGER_HEX}};
+
+      --font-primary: {{FONT_PRIMARY_STACK}};
+      --font-mono:    {{FONT_MONO_STACK}};
+
+      --radius-default: {{RADIUS_DEFAULT}}px;
+      --radius-card:    {{RADIUS_CARD}}px;
+
+      --motion-base:     {{DURATION_BASE}}ms;
+      --motion-fast:     {{DURATION_FAST}}ms;
+      --timing-standard: {{TIMING_STANDARD_CSS}};
+
+      --focus-ring-width:  {{FOCUS_WIDTH}}px;
+      --focus-ring-color:  {{FOCUS_COLOR_HEX}};
+      --focus-ring-offset: {{FOCUS_OFFSET}}px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg-canvas);
+      color: var(--fg-primary);
+      font-family: var(--font-primary);
+      font-size: {{BODY_SIZE}}px;
+      line-height: {{BODY_LINE_HEIGHT}};
+      min-height: 100vh;
+    }
+
+    /* ----- Shell ----- */
+
+    .shell {
+      display: grid;
+      grid-template-columns: {{NAV_WIDTH}}px 1fr;
+      min-height: 100vh;
+    }
+
+    @media (max-width: 768px) {
+      .shell { grid-template-columns: 1fr; }
+      .nav { order: 2; border-right: none; border-top: 1px solid var(--border-subtle); }
+      .content { order: 1; }
+    }
+
+    /* ----- Navigation ----- */
+
+    .nav {
+      border-right: 1px solid var(--border-subtle);
+      padding: 24px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nav-header {
+      font-size: {{MICRO_SIZE}}px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--fg-muted);
+      padding: 8px 12px 12px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: {{NAV_GAP}}px;
+      padding: 10px 12px;
+      color: var(--fg-muted);
+      text-decoration: none;
+      font-size: {{SMALL_SIZE}}px;
+      border-radius: var(--radius-default);
+      transition: color var(--motion-fast) var(--timing-standard),
+                  background var(--motion-fast) var(--timing-standard);
+      position: relative;
+    }
+
+    .nav-item:hover { color: var(--fg-primary); }
+
+    .nav-item[aria-current="page"] {
+      color: {{NAV_ACTIVE_COLOR}};
+    }
+
+    {{#NAV_INDICATOR_BAR}}
+    .nav-item[aria-current="page"]::after {
+      content: '';
+      position: absolute;
+      {{INDICATOR_POSITION_CSS}}
+      background: var(--accent-primary);
+      height: {{INDICATOR_THICKNESS}}px;
+    }
+    {{/NAV_INDICATOR_BAR}}
+
+    .nav-icon {
+      width: {{NAV_ICON_SIZE}}px;
+      height: {{NAV_ICON_SIZE}}px;
+      flex-shrink: 0;
+      {{#NAV_ICON_PIXEL}}
+      image-rendering: pixelated;
+      shape-rendering: crispEdges;
+      {{/NAV_ICON_PIXEL}}
+    }
+
+    /* ----- Content ----- */
+
+    .content {
+      padding: 32px;
+      {{#GRID_BROKEN}}overflow: visible;{{/GRID_BROKEN}}
+    }
+
+    .page-title {
+      font-size: {{H2_SIZE}}px;
+      line-height: {{H2_LINE_HEIGHT}};
+      font-weight: {{H2_WEIGHT}};
+      margin-bottom: 24px;
+    }
+
+    /* ----- Card grid ----- */
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat({{GRID_COLUMNS}}, 1fr);
+      gap: {{GRID_GAP}}px;
+      {{#GRID_BROKEN}}overflow: visible;{{/GRID_BROKEN}}
+    }
+
+    .card {
+      background: var(--bg-surface);
+      padding: {{CARD_PAD}}px;
+      border-radius: var(--radius-card);
+      border: 1px solid var(--border-subtle);
+      transition: border-color var(--motion-fast) var(--timing-standard);
+      grid-column: span {{CARD_SPAN}};
+      {{#CARD_NO_SHADOW}}/* shadow forbidden by brand policy */{{/CARD_NO_SHADOW}}
+      {{#CARD_HAS_SHADOW}}box-shadow: {{SHADOW_MD}};{{/CARD_HAS_SHADOW}}
+    }
+
+    .card.interactive:hover { border-color: var(--border-strong); }
+    .card.interactive:focus-visible {
+      outline: var(--focus-ring-width) solid var(--focus-ring-color);
+      outline-offset: var(--focus-ring-offset);
+    }
+
+    .card-label {
+      font-size: {{MICRO_SIZE}}px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--fg-muted);
+      margin-bottom: 8px;
+    }
+
+    .card-value {
+      font-size: {{H1_SIZE}}px;
+      font-weight: {{H1_WEIGHT}};
+      {{#HAS_TABULAR_NUMS}}font-feature-settings: 'tnum';{{/HAS_TABULAR_NUMS}}
+    }
+
+    .card-meta {
+      font-size: {{SMALL_SIZE}}px;
+      color: var(--fg-secondary);
+      margin-top: 8px;
+    }
+
+    /* ----- Form-row table (high-frequency data-entry surface) ----- */
+
+    .form-table {
+      margin-top: 40px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-card);
+      border: 1px solid var(--border-subtle);
+      padding: 24px;
+    }
+
+    .form-table h3 {
+      font-size: {{H3_SIZE}}px;
+      margin-bottom: 16px;
+    }
+
+    .form-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 12px 0;
+      {{#FORM_ROW_DASHED}}
+      border-bottom: 1px dashed var(--border-subtle);
+      {{/FORM_ROW_DASHED}}
+      {{#FORM_ROW_LINE}}
+      border-bottom: 1px solid var(--border-subtle);
+      {{/FORM_ROW_LINE}}
+    }
+
+    .form-row:last-child { border-bottom: none; }
+
+    .form-label {
+      color: var(--fg-secondary);
+      font-size: {{SMALL_SIZE}}px;
+    }
+
+    .form-value {
+      font-size: {{BODY_SIZE}}px;
+      font-weight: 500;
+      {{#HAS_TABULAR_NUMS}}font-feature-settings: 'tnum';{{/HAS_TABULAR_NUMS}}
+    }
+
+    .form-row.error .form-value {
+      color: var(--danger-base);
+    }
+
+    /* ----- State redundancy (non-color channel for colorblind users) ----- */
+
+    {{#HAS_REDUNDANCY_SHAPE}}
+    .form-row.error::before {
+      content: '';
+      display: inline-block;
+      width: 8px; height: 8px;
+      background: var(--danger-base);
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+    {{/HAS_REDUNDANCY_SHAPE}}
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shell">
+    <nav class="nav" aria-label="primary">
+      <div class="nav-header">{{NAV_HEADER}}</div>
+      {{#NAV_ITEMS}}
+      <a class="nav-item"
+         href="#"
+         {{#IS_CURRENT}}aria-current="page"{{/IS_CURRENT}}>
+        <svg class="nav-icon" viewBox="0 0 16 16" aria-hidden="true">
+          {{NAV_ICON_PATH}}
+        </svg>
+        <span>{{LABEL}}</span>
+      </a>
+      {{/NAV_ITEMS}}
+    </nav>
+
+    <main class="content" tabindex="-1">
+      <h1 class="page-title">{{PAGE_TITLE}}</h1>
+
+      <div class="card-grid">
+        {{#CARDS}}
+        <article class="card {{#INTERACTIVE}}interactive{{/INTERACTIVE}}"
+                 {{#INTERACTIVE}}tabindex="0"{{/INTERACTIVE}}>
+          <div class="card-label">{{LABEL}}</div>
+          <div class="card-value">{{VALUE}}</div>
+          <div class="card-meta">{{META}}</div>
+        </article>
+        {{/CARDS}}
+      </div>
+
+      <section class="form-table">
+        <h3>{{FORM_TABLE_TITLE}}</h3>
+        {{#FORM_ROWS}}
+        <div class="form-row {{#HAS_ERROR}}error{{/HAS_ERROR}}">
+          <span class="form-label">{{LABEL}}</span>
+          <span class="form-value">{{VALUE}}</span>
+        </div>
+        {{/FORM_ROWS}}
+      </section>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,149 @@
+# {{BRAND_NAME}} · Terminology Map
+
+Mandatory bundle artifact per design-intake skill v4.5. Translates Claude
+Design's official ingestion vocabulary to this bundle's internal section
+names and file paths, so team members uploading the bundle can reconcile
+the two vocabularies without guesswork.
+
+Source: Anthropic support article *"在 Claude Design 中設定您的設計系統"*.
+
+## 1. Category map
+
+Claude Design extracts and re-exposes exactly four categories. Every field
+this bundle emits must trace to one of them (or to the drop-silent axis,
+which is documented in `upload-checklist.md § schema-projection-report`).
+
+| Claude Design (zh-TW) | Claude Design (EN) | This bundle — `design.md §` | This bundle — `design.tokens.yaml §` | This bundle — generated file |
+|---|---|---|---|---|
+| 色彩調色板 | Color palette | § 4.1 Color + § 5 Semantic Tokens | `color.*`, `color.semantic.*`, `color.dark.*` | — |
+| 排版 | Typography | § 4.3 Typography | `typography.families`, `typography.scale.*` | — |
+| 元件 | Components | § 6 Components | `components.*` | — |
+| 版面配置模式 | Layout patterns | § 4.4 Spacing & Layout + § (per-page) | `spacing`, `layout.base`, `layout.page.*`, `layout.breakpoints` | — |
+
+## 2. Sub-field map
+
+Finer-grained mapping of the most-commonly-confused fields.
+
+### Color palette (色彩調色板)
+
+| Claude Design term | This bundle |
+|---|---|
+| primary color | `color.semantic.accent.primary` (semantic layer) · `color.<family>.<stop>` (palette layer) |
+| secondary color | `color.semantic.accent.hover` or `color.<secondary-family>.*` |
+| accent color | `color.semantic.accent.*` |
+| background | `color.semantic.bg.*` |
+| text color | `color.semantic.fg.*` |
+| dark mode | `color.dark.semantic.*` (always explicit; `auto-invert` forbidden) |
+| semantic danger/warning/success | `color.semantic.state.*` |
+
+### Typography (排版)
+
+| Claude Design term | This bundle |
+|---|---|
+| font family | `typography.families.{primary,mono}` |
+| display / heading / body sizes | `typography.scale.{display,h1,h2,body,small,micro}.size` |
+| weight | `typography.scale.*.weight` |
+| line-height | `typography.scale.*.line-height` (number, not `normal`) |
+| letter-spacing / tracking | `typography.scale.*.letter-spacing` |
+| tabular numbers (numbers alignment) | `typography.scale.*.number-style = tabular` (drop-warn; CSS `font-feature-settings: 'tnum'` at component level) |
+
+### Components (元件)
+
+| Claude Design term | This bundle |
+|---|---|
+| Button | `components.button.variants.*.states.*` |
+| Input / text field | `components.input.states.*` |
+| Card | `components.card.variants.*` |
+| navigation item | `components.nav-item.states.*` (composite, v4.5) |
+| list row | `components.list-row.states.*` (composite, v4.5) |
+| form row | `components.form-row.variants.*` (composite, v4.5) |
+| variant | `components.*.variants.<name>` |
+| state | `components.*.variants.<variant>.<state>` or `components.*.<state>` |
+
+### Layout patterns (版面配置模式)
+
+| Claude Design term | This bundle |
+|---|---|
+| grid | `layout.base.grid.{mode,columns,gap}` |
+| spacing rhythm | `spacing: [...]` (explicit array) |
+| breakpoints | `layout.breakpoints.{sm,md,lg,xl,2xl}` |
+| page structure | `layout.page.<name>` deltas against `layout.base` (drop-silent; applied at implementation level) |
+| container | `layout.base.container.{mode,max-width,padding-x}` |
+
+## 3. Out-of-schema surface — drop-silent
+
+These bundle fields do not map to any of the four Claude Design categories.
+They are silently ignored at upload. Each has a fallback recipe in
+`upload-checklist.md § schema-projection-report` and in
+`references/schema-projection.md § fallback-recipe-catalog`.
+
+{{#OUT_OF_SCHEMA_MAP}}
+| Bundle field | Drop tag | Fallback recipe |
+|---|---|---|
+| `{{FIELD}}` | `{{TAG}}` | {{RECIPE_SUMMARY}} |
+{{/OUT_OF_SCHEMA_MAP}}
+
+## 4. Positive-constraint surface
+
+Positive constraints are not drop-silent — they are separate. They encode
+brand-imposed rules and are enforced by `scripts/token-lint.py`, not by
+Claude Design.
+
+{{#POSITIVE_CONSTRAINT_ROWS}}
+| `{{ID}}` | {{RULE_SUMMARY}} |
+{{/POSITIVE_CONSTRAINT_ROWS}}
+
+See `design.md § 3 Positive Constraints` for full definitions.
+
+## 5. Override surface
+
+Gate overrides recorded for this bundle. The override framework is
+internal to this bundle's review process and invisible to Claude Design.
+
+{{#OVERRIDE_ROWS}}
+| Gate `{{GATE}}` | scope: `{{SCOPE}}` | reason: {{REASON_SHORT}} |
+{{/OVERRIDE_ROWS}}
+
+## 6. What Claude Design cannot produce from this bundle
+
+Even after a clean upload, Claude Design does not generate:
+
+- Voice-and-tone copy (see `design.md § 10`)
+- Photography / illustration / content
+- Actual React / Vue / Svelte component implementations (tokens only)
+- Shader / WebGL / framework-motion animations (CSS fallback only)
+- Multi-tenant overlay management (single-system model)
+
+For these, `design.md § 13 Capability Boundaries` lists the degradation
+applied by the intake skill. The team is responsible for the manual
+follow-up.
+
+## 7. Glossary
+
+Terms that may confuse cross-role readers.
+
+- **Semantic token** — a named token like `color.semantic.accent.primary`
+  that points to a palette stop. Components reference semantic tokens so
+  the palette can change without touching components.
+- **Positive constraint** — a brand-imposed rule that restricts the design
+  space (e.g., "≤ 32 colors locked to Endesga-32"). Checked by
+  `token-lint.py`. Not overrideable within a run.
+- **Gate override** — a structured exception to a mechanical gate
+  (e.g., "neutral scale of 5 instead of 9 because of palette-lock"). Must
+  carry a three-field reason and a glob-scope.
+- **Drop-silent** — a field the upload accepts without error but does not
+  ingest. The field vanishes from the generated system.
+- **Drop-warn / Drop-error** — see `references/schema-projection.md §
+  the-five-projection-tags`.
+- **Composite component** — a multi-slot element (nav-item, list-row,
+  form-row). v4.5 promoted these to first-class triad-peers.
+- **Contrast tier** — layered contrast enforcement
+  (text: AAA / ui: AA / decoration: free). Introduced in v4.5.
+- **Remix** — Claude Design's post-publish chat interface for iterating on
+  a published system.
+
+---
+
+*Generated by design-intake skill v4.5 · Bundle version {{VERSION}} · {{TIMESTAMP}}.
+For operational details, see `upload-checklist.md`. For narrative and brand
+soul, see `design.md`. For machine spec, see `design.tokens.yaml`.*
