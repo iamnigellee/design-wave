@@ -1,0 +1,346 @@
+meta:
+  brand: "Dusk"
+  version: "1.0.0"
+  schema: "design-intake-v4.5"
+  primary-mode: "dark"
+
+# ---------------------------------------------------------------------------
+# Positive constraints
+# ---------------------------------------------------------------------------
+
+positive_constraints:
+  - id: "accent-as-signal-only"
+    rule: "signal color appears only in CTA, focus ring, error state, selected state — never in decoration, hero, or illustration"
+    scope: ["components.*.variants.*.default.bg", "components.*.variants.*.focus.*", "components.*.variants.*.error.*"]
+    enforcement: "manual review; see design.md § brand-soul"
+
+  - id: "weights-restricted"
+    rule: "typography weights drawn only from {400, 500}"
+    allowed: [400, 500]
+    scope: ["typography.scale.*.weight"]
+
+  - id: "material-policy"
+    rule: "no gloss / chrome / liquid / noise — elevation via border + luminance step"
+    blacklist: ["gloss", "chrome", "liquid", "noise"]
+    scope: ["material.*"]
+
+# ---------------------------------------------------------------------------
+# Gate overrides (none — all gates pass)
+# ---------------------------------------------------------------------------
+
+overrides: []
+
+# ---------------------------------------------------------------------------
+# Color
+# ---------------------------------------------------------------------------
+
+color:
+  neutral:
+    "50":  {hex: "#FAF8F4", hsl: "40 33% 97%"}
+    "100": {hex: "#EFEAE1", hsl: "36 30% 91%"}
+    "200": {hex: "#DCD4C7", hsl: "34 24% 82%"}
+    "300": {hex: "#B8AE9E", hsl: "34 17% 67%"}
+    "400": {hex: "#8E8473", hsl: "34 11% 50%"}
+    "500": {hex: "#6A6154", hsl: "32 11% 37%"}
+    "600": {hex: "#4A443A", hsl: "32 11% 26%"}
+    "700": {hex: "#2E2A24", hsl: "30 11% 16%"}
+    "800": {hex: "#1C1A16", hsl: "30 10% 10%"}
+    "900": {hex: "#121110", hsl: "30 6%  7%"}
+    "950": {hex: "#0A0908", hsl: "30 9%  4%"}
+
+  signal:
+    flax: {hex: "#A89680", hsl: "36 15% 58%"}
+
+  contrast:
+    tier:
+      text: "AA"
+      ui: "AA"
+      decoration: "AA"
+    scope-globs:
+      text:       ["text.*", "components.*.label", "components.*.value"]
+      ui:         ["border.*", "components.*.focus.ring"]
+      decoration: ["backgrounds.pattern.*"]
+
+  semantic:
+    bg:
+      canvas:   "{color.neutral.900}"
+      surface:  "{color.neutral.950}"
+      elevated: "{color.neutral.800}"
+    fg:
+      primary:   "{color.neutral.50}"
+      secondary: "{color.neutral.300}"
+      muted:     "{color.neutral.400}"
+    border:
+      subtle: "{color.neutral.800}"
+      strong: "{color.neutral.700}"
+    accent:
+      primary: "{color.signal.flax}"
+      hover:   "{color.signal.flax}"
+      active:  "{color.signal.flax}"
+    state:
+      danger:  {base: "#8A4A3A"}
+      warning: {base: "#8A7A3A"}
+      success: {base: "#5A6A4A"}
+      info:    {base: "{color.signal.flax}"}
+
+  dark:
+    semantic:
+      bg:
+        canvas:   "{color.neutral.900}"
+        surface:  "{color.neutral.950}"
+        elevated: "{color.neutral.800}"
+      fg:
+        primary:   "{color.neutral.50}"
+        secondary: "{color.neutral.300}"
+        muted:     "{color.neutral.400}"
+      border:
+        subtle: "{color.neutral.800}"
+        strong: "{color.neutral.700}"
+      accent:
+        primary: "{color.signal.flax}"
+        hover:   "{color.signal.flax}"
+        active:  "{color.signal.flax}"
+      state:
+        danger:  {base: "#8A4A3A"}
+        warning: {base: "#8A7A3A"}
+        success: {base: "#5A6A4A"}
+        info:    {base: "{color.signal.flax}"}
+
+# ---------------------------------------------------------------------------
+# Typography
+# ---------------------------------------------------------------------------
+
+typography:
+  families:
+    primary: "Söhne, Inter, -apple-system, BlinkMacSystemFont, sans-serif"
+    mono:    "ui-monospace, 'SF Mono', 'JetBrains Mono', monospace"
+  scale:
+    display: {family: "{typography.families.primary}", size: 40, rem: 2.5,   line-height: 1.15, weight: 400, letter-spacing: "-0.02em"}
+    h1:      {family: "{typography.families.primary}", size: 28, rem: 1.75,  line-height: 1.2,  weight: 500, letter-spacing: "-0.01em"}
+    h2:      {family: "{typography.families.primary}", size: 18, rem: 1.125, line-height: 1.3,  weight: 500, letter-spacing: "0"}
+    body:    {family: "{typography.families.primary}", size: 16, rem: 1.0,   line-height: 1.5,  weight: 400, letter-spacing: "0"}
+    small:   {family: "{typography.families.primary}", size: 14, rem: 0.875, line-height: 1.5,  weight: 400, letter-spacing: "0"}
+    micro:   {family: "{typography.families.primary}", size: 12, rem: 0.75,  line-height: 1.4,  weight: 400, letter-spacing: "0.05em"}
+
+# ---------------------------------------------------------------------------
+# Spacing, radius, border, shadow
+# ---------------------------------------------------------------------------
+
+spacing: [0, 4, 8, 12, 16, 24, 32, 48, 64, 96]
+
+radius:
+  default: 2
+  none: 0
+  sm: 2
+  md: 4
+
+border:
+  width:
+    hairline: 1
+    base: 1
+    thick: 2
+  style: "solid"
+  default-color: "{color.semantic.border.subtle}"
+
+shadow:
+  policy: "forbidden"
+  rationale: "elevation communicated by 1px border + 2-5% luminance step between surfaces; gloss/shadow conflicts with 'the night is not embellished' brand stance"
+
+# ---------------------------------------------------------------------------
+# Motion — one timing function, slow duration
+# ---------------------------------------------------------------------------
+
+motion:
+  duration:
+    instant: 0
+    fast: 200
+    base: 400
+    slow: 600
+    dramatic: 600
+  timing-fn:
+    standard:
+      type: bezier
+      value: "cubic-bezier(0.32, 0.72, 0.24, 1)"
+  usage:
+    enter:        {duration: base, fn: standard}
+    exit:         {duration: fast, fn: standard}
+    hover:        {duration: base, fn: standard}
+    state-change: {duration: base, fn: standard}
+  reduced-motion:
+    strategy: remove
+    duration-override: 0
+
+# ---------------------------------------------------------------------------
+# Focus ring & z-index
+# ---------------------------------------------------------------------------
+
+focus-ring:
+  width: 2
+  style: "solid"
+  color: "{color.signal.flax}"
+  offset: 2
+
+z-index:
+  base: 0
+  dropdown: 10
+  sticky: 20
+  overlay: 30
+  modal: 40
+  toast: 50
+  tooltip: 60
+
+# ---------------------------------------------------------------------------
+# Material — declared forbidden / matte only
+# ---------------------------------------------------------------------------
+
+material:
+  matte:
+    render: flat
+    rationale: "Dusk's night-surface reads as matte; any sheen contradicts the 'cold black coffee' reference"
+
+# ---------------------------------------------------------------------------
+# Layout
+# ---------------------------------------------------------------------------
+
+layout:
+  base:
+    container:
+      mode: "fixed-max"
+      max-width: 640
+      padding-x: {mobile: 16, tablet: 24, desktop: 32}
+    grid:
+      mode: "standard-12"
+      columns: 12
+      gap: 24
+      overflow-allowed: false
+    density: "default"
+    logical: false
+  breakpoints:
+    sm: 640
+    md: 768
+    lg: 1024
+    xl: 1280
+    "2xl": 1536
+  primary-viewport:
+    width: 375
+    height: 812
+    device-pixel-ratio: 2
+    posture: "portrait-single-hand"
+  page:
+    home:
+      grid.mode: "full-bleed-stack"
+      container.mode: "fixed-max"
+      rationale: "single-column reading flow; the app's primary surface is narrative-calm, not information-dense"
+    session:
+      density: "sparse"
+      rationale: "during a meditation session, one focal element per screen; nothing competes for attention"
+    journal:
+      density: "default"
+      rationale: "archive-style list; readable density without compression"
+
+# ---------------------------------------------------------------------------
+# Components
+# ---------------------------------------------------------------------------
+
+components:
+  base:
+    interactive-5state:
+      states: [default, hover, focus, active, disabled]
+    form-5state:
+      states: [default, hover, focus, disabled, error]
+
+  button:
+    extends: "interactive-5state"
+    base:
+      radius: 2
+      padding: "12px 20px"
+      font: "{typography.scale.body}"
+      weight: 500
+    variants:
+      primary:
+        default:  {bg: "{color.semantic.fg.primary}", fg: "{color.semantic.bg.canvas}"}
+        hover:    {bg: "{color.semantic.bg.elevated}"}
+        focus:    {ring: "2px solid {color.signal.flax}"}
+        active:   {bg: "{color.semantic.bg.elevated}"}
+        disabled: {bg: "{color.semantic.fg.primary}", fg: "{color.semantic.bg.canvas}", opacity: 0.4}
+        loading:  {bg: "{color.semantic.fg.primary}", fg: "{color.semantic.bg.canvas}", content: "dots"}
+      secondary:
+        default:  {bg: "{color.semantic.bg.canvas}", fg: "{color.semantic.fg.primary}", border: "1px solid {color.semantic.border.strong}"}
+        hover:    {bg: "{color.semantic.bg.elevated}"}
+        focus:    {ring: "2px solid {color.signal.flax}"}
+        active:   {bg: "{color.semantic.bg.elevated}"}
+        disabled: {opacity: 0.4}
+
+  input:
+    extends: "form-5state"
+    base:
+      radius: 0
+      padding: "12 0"
+      font: "{typography.scale.body}"
+    default:  {bg: "{color.semantic.bg.elevated}", fg: "{color.semantic.fg.primary}", border: "1px solid {color.semantic.border.subtle}"}
+    hover:    {border: "1px solid {color.semantic.border.strong}"}
+    focus:    {border: "1px solid {color.signal.flax}"}
+    disabled: {opacity: 0.4}
+    error:    {border: "1px solid {color.semantic.state.danger.base}", hint-color: "{color.semantic.state.danger.base}"}
+
+  card:
+    extends: "interactive-5state"
+    base:
+      bg: "{color.semantic.bg.surface}"
+      padding: 24
+      radius: 4
+      border: "1px solid {color.semantic.border.subtle}"
+    default:  {bg: "{color.semantic.bg.surface}"}
+    hover:    {border: "1px solid {color.semantic.border.strong}"}
+    focus:    {ring: "2px solid {color.signal.flax}"}
+    active:   {bg: "{color.semantic.bg.elevated}"}
+    disabled: {opacity: 0.4}
+
+  nav-item:
+    extends: "interactive-5state"
+    base:
+      icon: {type: "svg", size: 20}
+      label: {font: "{typography.scale.small}"}
+      gap-icon-label: 12
+      padding: "10 12"
+    default:  {fg: "{color.semantic.fg.muted}", label-always-visible: true}
+    hover:    {fg: "{color.semantic.fg.primary}"}
+    focus:    {ring: "2px solid {color.signal.flax}"}
+    active:   {fg: "{color.signal.flax}"}
+    disabled: {opacity: 0.4}
+    selected-indicator:
+      style: "bar"
+      thickness: 2
+      color: "{color.signal.flax}"
+      position: "left"
+
+  list-row:
+    extends: "interactive-5state"
+    base:
+      padding: "12 16"
+      min-height: 44
+      separator:
+        style: "line"
+        color: "{color.semantic.border.subtle}"
+        placement: "bottom"
+    default:  {bg: "{color.semantic.bg.canvas}"}
+    hover:    {bg: "{color.semantic.bg.elevated}"}
+    focus:    {ring: "2px solid {color.signal.flax}"}
+    active:   {bg: "{color.semantic.bg.elevated}"}
+    disabled: {opacity: 0.4}
+
+  form-row:
+    extends: "form-5state"
+    base:
+      padding: "8 0"
+      separator:
+        style: "line"
+        color: "{color.semantic.border.subtle}"
+        placement: "bottom"
+      label: {font: "{typography.scale.small}", color: "{color.semantic.fg.muted}"}
+      value: {font: "{typography.scale.body}", color: "{color.semantic.fg.primary}"}
+    default:  {bg: "{color.semantic.bg.canvas}"}
+    hover:    {bg: "{color.semantic.bg.canvas}"}
+    focus:    {ring: "2px solid {color.signal.flax}"}
+    disabled: {opacity: 0.4}
+    error:    {hint-color: "{color.semantic.state.danger.base}"}
