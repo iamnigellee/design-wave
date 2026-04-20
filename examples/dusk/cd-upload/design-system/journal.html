@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Dusk · Journal</title>
+
+  <!--
+    Sample dashboard / second surface for Dusk Design System v1.0.
+    Exercises the component surface most likely to drift during Claude
+    Design ingestion:
+      - nav-item with LEFT-side 2px bar indicator (non-default; drop-silent)
+      - card hover changes border only — never shadow (taboo)
+      - form-row with line separator and tabular-nums values
+      - list-row at 44px min-height
+      - button secondary variant (bordered)
+
+    For Dusk the "dashboard" is actually a journal archive — the product
+    has no multi-surface dashboard. This is the second-highest-density
+    surface after the session screen.
+
+    Renders at primary viewport 375 × 812 and gracefully expands to desktop.
+  -->
+
+  <style>
+    :root {
+      --neutral-50:  #FAF8F4;
+      --neutral-300: #B8AE9E;
+      --neutral-400: #8E8473;
+      --neutral-700: #2E2A24;
+      --neutral-800: #1C1A16;
+      --neutral-900: #121110;
+      --neutral-950: #0A0908;
+      --signal-flax: #A89680;
+
+      --bg-canvas:   var(--neutral-900);
+      --bg-surface:  var(--neutral-950);
+      --bg-elevated: var(--neutral-800);
+      --fg-primary:   var(--neutral-50);
+      --fg-secondary: var(--neutral-300);
+      --fg-muted:     var(--neutral-400);
+      --border-subtle: var(--neutral-800);
+      --border-strong: var(--neutral-700);
+
+      --font-primary: "Söhne", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+
+      --motion-fast: 200ms;
+      --motion-base: 400ms;
+      --timing: cubic-bezier(0.32, 0.72, 0.24, 1);
+
+      --radius-sm: 2px;
+      --radius-md: 4px;
+
+      --focus-width: 2px;
+      --focus-offset: 2px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      background: var(--bg-canvas);
+      color: var(--fg-primary);
+      font-family: var(--font-primary);
+      font-size: 16px;
+      line-height: 1.5;
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      min-height: 100vh;
+    }
+
+    /* --- Shell --- */
+
+    .shell {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 100vh;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
+      .shell {
+        grid-template-columns: 1fr;
+      }
+      .nav {
+        order: 2;
+        border-right: none;
+        border-top: 1px solid var(--border-subtle);
+        display: flex;
+        flex-direction: row;
+        gap: 0;
+        padding: 8px 16px;
+        overflow-x: auto;
+      }
+      .nav-header, .nav-sep { display: none; }
+      .nav-item { flex-shrink: 0; }
+    }
+
+    /* --- Navigation --- */
+
+    .nav {
+      border-right: 1px solid var(--border-subtle);
+      padding: 32px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nav-header {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--fg-muted);
+      padding: 8px 12px 16px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      color: var(--fg-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 400;
+      border-radius: var(--radius-sm);
+      position: relative;
+      transition: color var(--motion-base) var(--timing);
+    }
+
+    .nav-item:hover {
+      color: var(--fg-primary);
+    }
+
+    .nav-item:focus-visible {
+      outline: var(--focus-width) solid var(--signal-flax);
+      outline-offset: var(--focus-offset);
+    }
+
+    /*
+      LEFT-side 2px bar indicator — the non-default selection style likely
+      to drift during Claude Design ingestion (most products use bottom
+      underline). This is the most visible schema-projection test.
+    */
+    .nav-item[aria-current="page"] {
+      color: var(--signal-flax);
+    }
+
+    .nav-item[aria-current="page"]::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 10%;
+      bottom: 10%;
+      width: 2px;
+      background: var(--signal-flax);
+    }
+
+    .nav-icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      stroke: currentColor;
+      stroke-width: 1.5;
+      fill: none;
+    }
+
+    /* --- Content --- */
+
+    .content {
+      padding: 48px 32px;
+    }
+
+    @media (max-width: 640px) {
+      .content { padding: 32px 16px; }
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .page-sub {
+      color: var(--fg-muted);
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 40px;
+    }
+
+    /* --- Card list (journal entries) --- */
+
+    .card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 48px;
+    }
+
+    .card {
+      display: block;
+      background: var(--bg-surface);
+      padding: 24px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      text-decoration: none;
+      color: inherit;
+      transition: border-color var(--motion-base) var(--timing);
+      /* No box-shadow — ever. Elevation by border + luminance step only. */
+    }
+
+    .card:hover {
+      border-color: var(--border-strong);
+    }
+
+    .card:focus-visible {
+      outline: var(--focus-width) solid var(--signal-flax);
+      outline-offset: var(--focus-offset);
+    }
+
+    .card-meta {
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--fg-muted);
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 8px;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: 0;
+      line-height: 1.3;
+      color: var(--fg-primary);
+      margin-bottom: 4px;
+    }
+
+    .card-body {
+      font-size: 14px;
+      color: var(--fg-secondary);
+      line-height: 1.5;
+    }
+
+    /* --- Form-row table (session metadata) --- */
+
+    .metadata {
+      background: var(--bg-surface);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      padding: 24px;
+    }
+
+    .metadata h2 {
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 1.3;
+      margin-bottom: 16px;
+    }
+
+    .form-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 14px;
+    }
+
+    .form-row:last-of-type { border-bottom: none; }
+
+    .form-label {
+      color: var(--fg-muted);
+      font-weight: 400;
+    }
+
+    .form-value {
+      color: var(--fg-primary);
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* --- Secondary button (bordered) --- */
+
+    .actions {
+      margin-top: 32px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: var(--bg-canvas);
+      color: var(--fg-primary);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-primary);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background var(--motion-base) var(--timing),
+                  border-color var(--motion-base) var(--timing);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-elevated);
+    }
+
+    .btn-secondary:focus-visible {
+      outline: var(--focus-width) solid var(--signal-flax);
+      outline-offset: var(--focus-offset);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shell">
+    <nav class="nav" aria-label="Primary">
+      <div class="nav-header">Dusk</div>
+
+      <a class="nav-item" href="#tonight">
+        <svg class="nav-icon" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M12 9a5 5 0 1 1-5-5 4 4 0 0 0 5 5z" stroke-linejoin="round"/>
+        </svg>
+        <span>Tonight</span>
+      </a>
+
+      <a class="nav-item" href="#journal" aria-current="page">
+        <svg class="nav-icon" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M3 2h8a1 1 0 0 1 1 1v11l-3-2-3 2-3-2V3a1 1 0 0 1 1-1z"/>
+        </svg>
+        <span>Journal</span>
+      </a>
+
+      <a class="nav-item" href="#settings">
+        <svg class="nav-icon" viewBox="0 0 16 16" aria-hidden="true">
+          <circle cx="8" cy="8" r="2.5"/>
+          <path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.3 3.3l1.4 1.4M11.3 11.3l1.4 1.4M3.3 12.7l1.4-1.4M11.3 4.7l1.4-1.4"/>
+        </svg>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <main class="content" tabindex="-1">
+      <h1 class="page-title">Journal</h1>
+      <p class="page-sub">47 sessions. Most recent first.</p>
+
+      <section class="card-list" aria-label="Recent sessions">
+        <a class="card" href="#entry-47">
+          <div class="card-meta">Last night &middot; 2:47 a.m.</div>
+          <div class="card-title">Wide awake at the wrong hour</div>
+          <div class="card-body">
+            You stayed for 8 minutes. Heart rate settled from 82 to 74.
+          </div>
+        </a>
+
+        <a class="card" href="#entry-46">
+          <div class="card-meta">Two nights ago &middot; 3:14 a.m.</div>
+          <div class="card-title">Couldn&rsquo;t stop thinking about the email</div>
+          <div class="card-body">
+            You stayed for 12 minutes. Heart rate settled from 89 to 71.
+          </div>
+        </a>
+
+        <a class="card" href="#entry-45">
+          <div class="card-meta">Last week &middot; 1:58 a.m.</div>
+          <div class="card-title">Work is finally quiet</div>
+          <div class="card-body">
+            You stayed for 6 minutes. Heart rate 68 throughout.
+          </div>
+        </a>
+      </section>
+
+      <section class="metadata" aria-label="This month">
+        <h2>This month</h2>
+
+        <div class="form-row">
+          <span class="form-label">Sessions</span>
+          <span class="form-value">23</span>
+        </div>
+        <div class="form-row">
+          <span class="form-label">Total minutes</span>
+          <span class="form-value">184</span>
+        </div>
+        <div class="form-row">
+          <span class="form-label">Average start time</span>
+          <span class="form-value">2:19 a.m.</span>
+        </div>
+        <div class="form-row">
+          <span class="form-label">Longest session</span>
+          <span class="form-value">18 min</span>
+        </div>
+        <div class="form-row">
+          <span class="form-label">Return rate</span>
+          <span class="form-value">74%</span>
+        </div>
+      </section>
+
+      <div class="actions">
+        <button class="btn-secondary" type="button">Export &middot; CSV</button>
+        <button class="btn-secondary" type="button">Archive old entries</button>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

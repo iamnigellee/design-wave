@@ -1,0 +1,193 @@
+/*
+ * Dusk Design System — Design Tokens
+ * v1.0.0
+ *
+ * Primary source of truth for the design system. All components in this
+ * folder reference these variables. Claude Design's ingestion will extract
+ * palette, typography, spacing, and component tokens from this file plus
+ * the sample HTML alongside.
+ *
+ * Dark is the primary mode (not a variant). Light mode is roadmap v1.1.
+ */
+
+:root {
+  /* ------------------------------------------------------------------ */
+  /*  Neutrals (11 stops, warm-undertone — hue ≈ 30°–40°, sat ≈ 6–33%)  */
+  /* ------------------------------------------------------------------ */
+
+  --neutral-50:  #FAF8F4;
+  --neutral-100: #EFEAE1;
+  --neutral-200: #DCD4C7;
+  --neutral-300: #B8AE9E;
+  --neutral-400: #8E8473;
+  --neutral-500: #6A6154;
+  --neutral-600: #4A443A;
+  --neutral-700: #2E2A24;
+  --neutral-800: #1C1A16;
+  --neutral-900: #121110;      /* default canvas */
+  --neutral-950: #0A0908;      /* surface (darker than canvas — intentional) */
+
+  /* ------------------------------------------------------------------ */
+  /*  Signal color — the only non-neutral.                              */
+  /*  MUST appear only in CTA / focus / error / selected indicator.     */
+  /*  Decoration use is forbidden by brand rule.                        */
+  /* ------------------------------------------------------------------ */
+
+  --signal-flax: #A89680;
+
+  /* ------------------------------------------------------------------ */
+  /*  Semantic tokens (dark-primary)                                    */
+  /* ------------------------------------------------------------------ */
+
+  --bg-canvas:   var(--neutral-900);    /* default page background */
+  --bg-surface:  var(--neutral-950);    /* cards — darker than canvas */
+  --bg-elevated: var(--neutral-800);    /* hover / active */
+
+  --fg-primary:   var(--neutral-50);
+  --fg-secondary: var(--neutral-300);
+  --fg-muted:     var(--neutral-400);
+
+  --border-subtle: var(--neutral-800);
+  --border-strong: var(--neutral-700);
+
+  --accent-primary: var(--signal-flax);
+
+  --state-danger:  #8A4A3A;
+  --state-warning: #8A7A3A;
+  --state-success: #5A6A4A;
+  --state-info:    var(--signal-flax);
+
+  /* ------------------------------------------------------------------ */
+  /*  Typography — single family, weights 400 and 500 only              */
+  /* ------------------------------------------------------------------ */
+
+  --font-primary: "Söhne", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono:    ui-monospace, "SF Mono", "JetBrains Mono", monospace;
+
+  /* Scale — size / line-height / weight / letter-spacing */
+  --type-display-size: 40px;
+  --type-display-line: 1.15;
+  --type-display-weight: 400;
+  --type-display-tracking: -0.02em;
+
+  --type-h1-size: 28px;
+  --type-h1-line: 1.2;
+  --type-h1-weight: 500;
+  --type-h1-tracking: -0.01em;
+
+  --type-h2-size: 18px;
+  --type-h2-line: 1.3;
+  --type-h2-weight: 500;
+
+  --type-body-size: 16px;
+  --type-body-line: 1.5;
+  --type-body-weight: 400;
+
+  --type-small-size: 14px;
+  --type-small-line: 1.5;
+  --type-small-weight: 400;
+
+  --type-micro-size: 12px;
+  --type-micro-line: 1.4;
+  --type-micro-weight: 400;
+  --type-micro-tracking: 0.05em;
+
+  /* ------------------------------------------------------------------ */
+  /*  Spacing — explicit scale (no formulas)                            */
+  /* ------------------------------------------------------------------ */
+
+  --space-0:   0;
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  24px;
+  --space-6:  32px;
+  --space-7:  48px;
+  --space-8:  64px;
+  --space-9:  96px;
+
+  /* ------------------------------------------------------------------ */
+  /*  Radius — capped at 4px. Larger values forbidden.                  */
+  /* ------------------------------------------------------------------ */
+
+  --radius-none: 0;
+  --radius-sm:   2px;
+  --radius-md:   4px;
+
+  /* ------------------------------------------------------------------ */
+  /*  Border                                                            */
+  /* ------------------------------------------------------------------ */
+
+  --border-width-hairline: 1px;
+  --border-width-base:     1px;
+  --border-width-thick:    2px;
+
+  /* ------------------------------------------------------------------ */
+  /*  Shadow — POLICY: FORBIDDEN.                                       */
+  /*  No shadow token is defined. Elevation via border + luminance.     */
+  /* ------------------------------------------------------------------ */
+
+  /* --shadow-sm: forbidden; */
+  /* --shadow-md: forbidden; */
+
+  /* ------------------------------------------------------------------ */
+  /*  Motion — single timing function                                   */
+  /* ------------------------------------------------------------------ */
+
+  --duration-fast: 200ms;
+  --duration-base: 400ms;
+  --duration-slow: 600ms;
+
+  --timing-standard: cubic-bezier(0.32, 0.72, 0.24, 1);
+
+  /* ------------------------------------------------------------------ */
+  /*  Focus ring                                                        */
+  /* ------------------------------------------------------------------ */
+
+  --focus-ring-width:  2px;
+  --focus-ring-color:  var(--signal-flax);
+  --focus-ring-offset: 2px;
+
+  /* ------------------------------------------------------------------ */
+  /*  Z-index                                                           */
+  /* ------------------------------------------------------------------ */
+
+  --z-base:     0;
+  --z-dropdown: 10;
+  --z-sticky:   20;
+  --z-overlay:  30;
+  --z-modal:    40;
+  --z-toast:    50;
+  --z-tooltip:  60;
+}
+
+/* ==================================================================== */
+/*  Base styles                                                         */
+/* ==================================================================== */
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  background: var(--bg-canvas);
+  color: var(--fg-primary);
+  font-family: var(--font-primary);
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-line);
+  font-weight: var(--type-body-weight);
+}
+
+/* Every interactive element's focus-visible uses the signal color.
+   This is signal, not decoration — only visible on keyboard focus. */
+*:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}

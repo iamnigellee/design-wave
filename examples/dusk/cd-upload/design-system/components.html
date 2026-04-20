@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dusk · Component Showcase</title>
+
+  <!--
+    Exhaustive component × state demonstration. Each component appears in
+    every state it defines, so Claude Design's ingestion can extract a
+    complete state matrix rather than inferring from context-heavy pages.
+
+    Read alongside landing.html + journal.html which show components in
+    real usage.
+  -->
+
+  <link rel="stylesheet" href="tokens.css">
+
+  <style>
+    body {
+      padding: var(--space-7) var(--space-5);
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    section { margin-bottom: var(--space-8); }
+    section h2 {
+      font-size: var(--type-h2-size);
+      font-weight: var(--type-h2-weight);
+      line-height: var(--type-h2-line);
+      margin-bottom: var(--space-5);
+      padding-bottom: var(--space-3);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .state-label {
+      font-size: var(--type-micro-size);
+      font-weight: 500;
+      letter-spacing: var(--type-micro-tracking);
+      text-transform: uppercase;
+      color: var(--fg-muted);
+      margin-bottom: var(--space-2);
+    }
+
+    .row { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; margin-bottom: var(--space-5); }
+    .stack { display: flex; flex-direction: column; gap: var(--space-2); }
+
+    /* -------------------------------------------------------------- */
+    /*  Button                                                        */
+    /* -------------------------------------------------------------- */
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-5);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-primary);
+      font-size: var(--type-body-size);
+      font-weight: 500;
+      line-height: 1.2;
+      border: none;
+      cursor: pointer;
+      transition: background var(--duration-base) var(--timing-standard);
+    }
+
+    .btn-primary { background: var(--fg-primary); color: var(--bg-canvas); }
+    .btn-primary:hover,
+    .btn-primary[data-state="hover"] { background: var(--bg-elevated); color: var(--fg-primary); }
+    .btn-primary[data-state="disabled"],
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .btn-secondary {
+      background: var(--bg-canvas);
+      color: var(--fg-primary);
+      border: 1px solid var(--border-strong);
+    }
+    .btn-secondary:hover,
+    .btn-secondary[data-state="hover"] { background: var(--bg-elevated); }
+    .btn-secondary[data-state="disabled"] { opacity: 0.4; cursor: not-allowed; }
+
+    .btn-loading::after {
+      content: "···";
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 2px;
+    }
+    .btn-loading .btn-text { display: none; }
+
+    /* -------------------------------------------------------------- */
+    /*  Input                                                         */
+    /* -------------------------------------------------------------- */
+
+    .input {
+      display: block;
+      width: 100%;
+      padding: var(--space-3) var(--space-4);
+      background: var(--bg-elevated);
+      color: var(--fg-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-none);
+      font-family: var(--font-primary);
+      font-size: var(--type-body-size);
+      transition: border-color var(--duration-base) var(--timing-standard);
+    }
+    .input::placeholder { color: var(--fg-muted); }
+    .input:hover,
+    .input[data-state="hover"] { border-color: var(--border-strong); }
+    .input:focus,
+    .input[data-state="focus"] { border-color: var(--signal-flax); outline: none; }
+    .input[data-state="disabled"],
+    .input:disabled { opacity: 0.4; }
+    .input[data-state="error"] { border-color: var(--state-danger); }
+    .input-hint { font-size: var(--type-small-size); color: var(--fg-muted); margin-top: var(--space-2); }
+    .input-hint.error { color: var(--state-danger); }
+
+    /* -------------------------------------------------------------- */
+    /*  Card                                                          */
+    /* -------------------------------------------------------------- */
+
+    .card {
+      display: block;
+      background: var(--bg-surface);
+      padding: var(--space-5);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      /* NO box-shadow anywhere — elevation is border + luminance step only */
+      text-decoration: none;
+      color: inherit;
+      transition: border-color var(--duration-base) var(--timing-standard);
+    }
+    .card:hover,
+    .card[data-state="hover"] { border-color: var(--border-strong); }
+    .card[data-state="active"] { background: var(--bg-elevated); }
+    .card[data-state="disabled"] { opacity: 0.4; }
+
+    /* -------------------------------------------------------------- */
+    /*  Nav item (left-bar indicator — NON-default; highest drift risk) */
+    /* -------------------------------------------------------------- */
+
+    .nav-demo { display: flex; flex-direction: column; gap: var(--space-1); width: 220px; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      color: var(--fg-muted);
+      text-decoration: none;
+      font-size: var(--type-small-size);
+      border-radius: var(--radius-sm);
+      position: relative;
+      transition: color var(--duration-base) var(--timing-standard);
+    }
+    .nav-item:hover,
+    .nav-item[data-state="hover"] { color: var(--fg-primary); }
+    .nav-item[aria-current="page"],
+    .nav-item[data-state="active"] { color: var(--signal-flax); }
+    .nav-item[aria-current="page"]::before,
+    .nav-item[data-state="active"]::before {
+      content: "";
+      position: absolute;
+      left: 0; top: 10%; bottom: 10%;
+      width: 2px;
+      background: var(--signal-flax);
+    }
+
+    /* -------------------------------------------------------------- */
+    /*  List row                                                      */
+    /* -------------------------------------------------------------- */
+
+    .list-demo { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); }
+    .list-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-3) var(--space-4);
+      min-height: 44px;
+      border-bottom: 1px solid var(--border-subtle);
+      transition: background var(--duration-base) var(--timing-standard);
+    }
+    .list-row:last-child { border-bottom: none; }
+    .list-row:hover,
+    .list-row[data-state="hover"] { background: var(--bg-elevated); }
+    .list-row[data-state="active"] { background: var(--bg-elevated); }
+
+    /* -------------------------------------------------------------- */
+    /*  Form row                                                      */
+    /* -------------------------------------------------------------- */
+
+    .form-demo { background: var(--bg-surface); padding: var(--space-5); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); }
+    .form-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: var(--space-3) 0;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: var(--type-small-size);
+    }
+    .form-row:last-child { border-bottom: none; }
+    .form-label { color: var(--fg-muted); }
+    .form-value { color: var(--fg-primary); font-weight: 500; font-variant-numeric: tabular-nums; }
+    .form-row[data-state="error"] .form-value { color: var(--state-danger); }
+  </style>
+</head>
+
+<body>
+
+  <section>
+    <h2>Button — primary</h2>
+    <div class="row">
+      <div class="stack"><span class="state-label">Default</span><button class="btn btn-primary">Begin</button></div>
+      <div class="stack"><span class="state-label">Hover</span><button class="btn btn-primary" data-state="hover">Begin</button></div>
+      <div class="stack"><span class="state-label">Disabled</span><button class="btn btn-primary" disabled>Begin</button></div>
+      <div class="stack"><span class="state-label">Loading</span><button class="btn btn-primary btn-loading"><span class="btn-text">Begin</span></button></div>
+    </div>
+    <p class="state-label">Note: loading state shows three dots, never a spinner.</p>
+  </section>
+
+  <section>
+    <h2>Button — secondary</h2>
+    <div class="row">
+      <div class="stack"><span class="state-label">Default</span><button class="btn btn-secondary">Export · CSV</button></div>
+      <div class="stack"><span class="state-label">Hover</span><button class="btn btn-secondary" data-state="hover">Export · CSV</button></div>
+      <div class="stack"><span class="state-label">Disabled</span><button class="btn btn-secondary" data-state="disabled">Export · CSV</button></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Input</h2>
+    <div class="stack" style="gap: var(--space-4);">
+      <div><span class="state-label">Default</span><input class="input" placeholder="Your name"></div>
+      <div><span class="state-label">Hover</span><input class="input" placeholder="Your name" data-state="hover"></div>
+      <div><span class="state-label">Focus</span><input class="input" placeholder="Your name" data-state="focus" value="Elena"></div>
+      <div><span class="state-label">Disabled</span><input class="input" placeholder="Your name" data-state="disabled" disabled></div>
+      <div>
+        <span class="state-label">Error</span>
+        <input class="input" data-state="error" value="">
+        <p class="input-hint error">This field is required.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Card</h2>
+    <div class="stack" style="gap: var(--space-3);">
+      <div><span class="state-label">Default</span>
+        <a class="card" href="#">
+          <div style="font-size: var(--type-micro-size); color: var(--fg-muted); letter-spacing: var(--type-micro-tracking); text-transform: uppercase;">Last night · 2:47 a.m.</div>
+          <div style="font-size: var(--type-h2-size); font-weight: 500; margin-top: var(--space-2);">Wide awake at the wrong hour</div>
+          <div style="font-size: var(--type-small-size); color: var(--fg-secondary); margin-top: var(--space-1);">You stayed for 8 minutes.</div>
+        </a>
+      </div>
+      <div><span class="state-label">Hover (border only — no shadow)</span>
+        <a class="card" href="#" data-state="hover">
+          <div style="font-size: var(--type-micro-size); color: var(--fg-muted); letter-spacing: var(--type-micro-tracking); text-transform: uppercase;">Two nights ago · 3:14 a.m.</div>
+          <div style="font-size: var(--type-h2-size); font-weight: 500; margin-top: var(--space-2);">Couldn't stop thinking about the email</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>nav-item (left bar indicator — non-default; the highest schema-drift risk)</h2>
+    <nav class="nav-demo" aria-label="demo">
+      <a class="nav-item" href="#">Tonight</a>
+      <a class="nav-item" href="#" aria-current="page">Journal</a>
+      <a class="nav-item" href="#" data-state="hover">Settings</a>
+    </nav>
+    <p class="state-label" style="margin-top: var(--space-4);">Selected indicator is a 2px left bar — NOT a bottom underline.</p>
+  </section>
+
+  <section>
+    <h2>list-row</h2>
+    <div class="list-demo">
+      <div class="list-row"><span>Session · 8 min</span><span style="color: var(--fg-muted);">2:47 a.m.</span></div>
+      <div class="list-row" data-state="hover"><span>Session · 12 min</span><span style="color: var(--fg-muted);">3:14 a.m.</span></div>
+      <div class="list-row"><span>Session · 6 min</span><span style="color: var(--fg-muted);">1:58 a.m.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>form-row</h2>
+    <div class="form-demo">
+      <div class="form-row"><span class="form-label">Sessions</span><span class="form-value">23</span></div>
+      <div class="form-row"><span class="form-label">Total minutes</span><span class="form-value">184</span></div>
+      <div class="form-row"><span class="form-label">Average start time</span><span class="form-value">2:19 a.m.</span></div>
+      <div class="form-row" data-state="error"><span class="form-label">Return rate</span><span class="form-value">—</span></div>
+    </div>
+  </section>
+
+</body>
+</html>

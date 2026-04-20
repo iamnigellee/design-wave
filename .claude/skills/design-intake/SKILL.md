@@ -127,14 +127,26 @@ design.tokens.yaml     — machine-readable tokens (color, type, spacing, radius
                          components, per-page layout, contrast tiers)
 assets/sample-landing.html     — real sample at 375×812 viewport
 assets/sample-dashboard.html   — real sample at 375×812 and desktop
-upload-checklist.md    — official 4-step Claude Design onboarding + gate-check
-                         JSON + schema projection report + overrides
+upload-checklist.md    — pre-flight checks + setup-form field map + post-
+                         publish audit plan + gate-check JSON + overrides
 terminology-map.md     — Claude Design official categories ↔ this bundle's
                          sections (mandatory, not optional)
+cd-upload/             — ready-to-paste artifacts matched to Claude Design's
+                         real setup form
+  ├── README.md        — field-by-field mapping
+  ├── blurb.txt        — paste into "Company name and blurb"
+  ├── notes.md         — paste into "Any other notes?"
+  └── design-system/   — drop folder into "Link code from your computer"
+      ├── tokens.css           CSS custom properties
+      ├── tokens.json          W3C design-token JSON
+      ├── components.html      every component × every state
+      ├── landing.html         brand-feel hero
+      ├── journal.html         dashboard-class second surface
+      └── README.md            reading order + brand rules
 ```
 
-Templates live in `assets/`. See `references/claude-design-upload.md` for the
-4-step upload sequence and test prompts.
+Templates live in `assets/`. See `references/claude-design-upload.md` for
+the real setup form (single-page, six fields) and test prompts.
 
 ---
 

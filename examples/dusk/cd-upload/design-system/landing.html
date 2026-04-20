@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Dusk · Meditation built for insomnia</title>
+
+  <!--
+    Sample landing page for Dusk Design System v1.0.
+    Renders at primary viewport: 375 × 812 (iPhone 13 mini class),
+    portrait single-hand posture.
+
+    Per Claude Design's official onboarding guidance:
+    "完成的登陸頁面比單獨的色彩調色板更能向 Claude 說明您品牌的感受."
+    This file is one of the two strongest signals in the upload bundle.
+
+    Demonstrates:
+      - dark-primary mode (bg.canvas #121110)
+      - display typography 40px (bumped from 32 during Act ⑤ preview gate)
+      - signal-only accent: flax (#A89680) appears only in CTA + focus ring
+      - no shadow anywhere (taboo); elevation via border + luminance
+      - single timing function, slow duration
+      - restrained weight palette (400 / 500 only)
+  -->
+
+  <style>
+    :root {
+      /* Palette */
+      --neutral-50:  #FAF8F4;
+      --neutral-300: #B8AE9E;
+      --neutral-400: #8E8473;
+      --neutral-700: #2E2A24;
+      --neutral-800: #1C1A16;
+      --neutral-900: #121110;
+      --neutral-950: #0A0908;
+
+      /* Signal — only in CTA, focus, error, selected */
+      --signal-flax: #A89680;
+
+      /* Semantic (dark-primary) */
+      --bg-canvas:   var(--neutral-900);
+      --bg-surface:  var(--neutral-950);
+      --bg-elevated: var(--neutral-800);
+      --fg-primary:   var(--neutral-50);
+      --fg-secondary: var(--neutral-300);
+      --fg-muted:     var(--neutral-400);
+      --border-subtle: var(--neutral-800);
+      --border-strong: var(--neutral-700);
+
+      /* Typography */
+      --font-primary: "Söhne", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+
+      /* Motion — single timing function */
+      --motion-fast: 200ms;
+      --motion-base: 400ms;
+      --motion-slow: 600ms;
+      --timing: cubic-bezier(0.32, 0.72, 0.24, 1);
+
+      /* Shape */
+      --radius-sm: 2px;
+      --radius-md: 4px;
+
+      /* Focus ring */
+      --focus-width: 2px;
+      --focus-offset: 2px;
+    }
+
+    /* --- Reset --- */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      background: var(--bg-canvas);
+      color: var(--fg-primary);
+      font-family: var(--font-primary);
+      font-size: 16px;
+      line-height: 1.5;
+      font-weight: 400;
+      letter-spacing: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* --- Layout --- */
+
+    main {
+      max-width: 640px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 96px 24px 48px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    @media (max-width: 640px) {
+      main { padding: 64px 16px 32px; }
+    }
+
+    /* --- Typography --- */
+
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.4;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--fg-muted);
+      margin-bottom: 24px;
+    }
+
+    h1.display {
+      font-size: 40px;
+      font-weight: 400;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--fg-primary);
+      margin-bottom: 32px;
+      max-width: 18ch;
+    }
+
+    @media (max-width: 640px) {
+      h1.display { font-size: 32px; }
+    }
+
+    p.lede {
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--fg-secondary);
+      max-width: 36ch;
+      margin-bottom: 48px;
+    }
+
+    /* --- Primary CTA --- */
+
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      background: var(--fg-primary);
+      color: var(--bg-canvas);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-primary);
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: 0;
+      cursor: pointer;
+      text-decoration: none;
+      align-self: flex-start;
+      transition: background var(--motion-base) var(--timing);
+    }
+
+    .cta:hover {
+      background: var(--bg-elevated);
+      color: var(--fg-primary);
+    }
+
+    .cta:focus-visible {
+      outline: var(--focus-width) solid var(--signal-flax);
+      outline-offset: var(--focus-offset);
+    }
+
+    .cta:active {
+      background: var(--bg-elevated);
+      color: var(--fg-primary);
+    }
+
+    .cta .duration {
+      font-variant-numeric: tabular-nums;
+      color: inherit;
+      opacity: 0.7;
+    }
+
+    /* --- Secondary block --- */
+
+    .proof {
+      margin-top: auto;
+      padding-top: 64px;
+      border-top: 1px solid var(--border-subtle);
+      color: var(--fg-muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .proof p + p { margin-top: 8px; }
+
+    .timestamp {
+      font-variant-numeric: tabular-nums;
+      color: var(--fg-secondary);
+    }
+
+    /* --- Accessibility --- */
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+
+    /* --- No shadow enforcement (brand taboo) --- */
+    /* Any component reintroducing shadow violates the bundle. */
+  </style>
+</head>
+
+<body>
+  <main>
+    <p class="eyebrow">Meditation · Built for insomnia</p>
+
+    <h1 class="display">Can&rsquo;t sleep.<br>That&rsquo;s okay.</h1>
+
+    <p class="lede">
+      Dusk doesn&rsquo;t fix your insomnia.
+      It sits in it with you.
+    </p>
+
+    <a class="cta" href="#begin">
+      <span>Begin</span>
+      <span class="duration">&middot; 8 min</span>
+    </a>
+
+    <section class="proof" aria-label="Tonight&rsquo;s context">
+      <p class="timestamp">It&rsquo;s 2:34 a.m.</p>
+      <p>You&rsquo;ve been awake for 47 minutes since you last put the phone down.</p>
+    </section>
+  </main>
+</body>
+</html>
